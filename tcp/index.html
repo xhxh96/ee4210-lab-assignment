@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>EE4210 CA2 TCP Application</title>
+</head>
+<body>
+    <input type="text" id="user-input">
+    <button type="button" onclick="getUserInput();">Submit</button>
+    <p id="output"></p>
+</body>
+<script>
+    function getUserInput() {
+        const input = document.getElementById("user-input").value;
+        document.getElementById("output").innerHTML = "Output: " + input;
+    }
+</script>
+</html>
