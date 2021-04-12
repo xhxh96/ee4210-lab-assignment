@@ -39,11 +39,11 @@ def handle_request(request):
     
     # If path is root, load HTML_CONTENT
     if request_path == '/':
-        response = 'HTTP/1.1 200 OK\n\n' + HTML_CONTENT
+        response = 'HTTP/1.1 200 OK\r\n' + HTML_CONTENT
     
     # Any other request_path is deemed invalid
     else:
-        response = 'HTTP/1.1 404 NOT FOUND\n\nInvalid URL'
+        response = 'HTTP/1.1 404 NOT FOUND\r\nInvalid URL'
 
     return response
 
