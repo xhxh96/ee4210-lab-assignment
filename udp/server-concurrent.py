@@ -16,19 +16,11 @@ else:
 HTML_CONTENT = '''
 <html>
 <head>
-    <title>EE4210 CA2 TCP Application</title>
+    <title>EE4210 CA2 UDP Application</title>
 </head>
 <body>
-    <input type="text" id="user-input">
-    <button type="button" onclick="getUserInput();">Submit</button>
-    <p id="output"></p>
+    <p>EE-4210: Continuous Assessment</p>
 </body>
-<script>
-    function getUserInput() {
-        const input = document.getElementById("user-input").value;
-        document.getElementById("output").innerHTML = "You Typed: " + input;
-    }
-</script>
 </html>
 '''
 
@@ -51,17 +43,16 @@ def handle_request(request):
 
 # Initailize socket using IPv4 address and TCP
 try:
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((SERVER_HOST, SERVER_PORT))
-    server.listen(5)
     print(f'Server Started!\nListening to port {SERVER_PORT} ...')
 except Exception as e:
     print(f'Unable to start server at port {SERVER_PORT}!\nError: {e}')
 
 while True:
     # Wait for client connections
-    client_connection, client_address = server.accept()
+    data, client_address = server.recvfrom(1024)
 
     pid = os.fork()
 
@@ -69,26 +60,17 @@ while True:
     if pid == 0:
         print(f"Received connection from {client_address} at {datetime.utcnow().isoformat(sep=' ', timespec='milliseconds')} on PID {os.getpid()}")
         
-        # Detach server socket from child process
-        server.detach()
         
         # Get the client request
-        request = client_connection.recv(1024).decode()
+        request = data.decode()
         print(request)
 
         # Return an HTTP response
         response = handle_request(request)
-        client_connection.sendall(response.encode())
-
-        # Close connection
-        client_connection.close()
+        server.sendto(response.encode(), client_address)
 
         # Exit
         os._exit(0)
-    
-    # Terminate client connection request in parent process
-    else:
-        client_connection.close()
 
 # Close socket
 server.close()
