@@ -13,16 +13,14 @@ else:
     SERVER_PORT = 8080
 
 # HTML Content to be served when client is connected
-HTML_CONTENT = '''
-<html>
+HTML_CONTENT = '''<html>
 <head>
     <title>EE4210 CA2 UDP Application</title>
 </head>
 <body>
     <p>EE-4210: Continuous Assessment</p>
 </body>
-</html>
-'''
+</html>'''
 
 def handle_request(request):
     # Process headers
@@ -54,12 +52,13 @@ while True:
     # Wait for client connections
     data, client_address = server.recvfrom(1024)
 
-    pid = os.fork()
+    # fork process only when there is data
+    if data:
+        pid = os.fork()
 
     # handle client request in child process
     if pid == 0:
         print(f"Received connection from {client_address} at {datetime.utcnow().isoformat(sep=' ', timespec='milliseconds')} on PID {os.getpid()}")
-        
         
         # Get the client request
         request = data.decode()
