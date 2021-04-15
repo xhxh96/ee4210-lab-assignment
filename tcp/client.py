@@ -1,7 +1,8 @@
 import socket
 from datetime import datetime
+import os
 
-print(f"Establishing Connection at {datetime.utcnow().isoformat(sep=' ', timespec='milliseconds')}")
+print(f"Establishing Connection at {datetime.utcnow().isoformat(sep=' ', timespec='milliseconds')} on PID {os.getpid()}")
 
 SERVER_HOST = ''
 SERVER_PORT = 8080

@@ -24,7 +24,7 @@ body = content.split('\r\n')[1]
 
 # Save HTML body to file
 f = open(f'response_{os.getpid()}.html', 'w')
-f.write(body)
+f.write(body.strip())
 f.close()
 
 client.close()

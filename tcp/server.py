@@ -1,7 +1,78 @@
 import sys
 import socket
 import os
+from time import sleep
 from datetime import datetime
+from urllib.parse import unquote
+
+# HTML Content to be served when client is connected
+def default_content():
+    content = '''
+    <html>
+    <head>
+        <title>EE4210 CA2 TCP Application</title>
+    </head>
+    <body>
+        <form action="/text-response" method="post">
+            <label for="user-input">Enter text here:</label>
+            <input type="text" name="user-input" id="user-input">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+    </html>
+    '''
+    return content
+
+# HTML content to display user input
+def response_content(text):
+    content = '''
+    <html>
+    <head>
+        <title>EE4210 CA2 TCP Application</title>
+    </head>
+    <body>
+        <p id="output">You typed: {text}</p>
+    </body>
+    </html>
+    '''
+    return content.format(text=text)
+
+# Handle client request
+def handle_request(request):
+    # Process headers
+    headers = request.split('\r\n')
+    request_path = headers[0].split()[1]
+
+    # If path is root, load HTML_CONTENT
+    if request_path == '/':
+        response = 'HTTP/1.1 200 OK\r\n' + default_content()
+    
+    elif request_path == '/text-response':
+
+        # Get user-input field in request
+        user_input_param = headers[len(headers) - 1]
+
+        # Get user-input value
+        user_input = user_input_param.split('=')[1]
+
+        # Convert from URL characters to ASCI characters and replace + with space
+        user_input = unquote(user_input).replace('+', ' ')
+
+        # Get HTML content 
+        content = response_content(user_input)
+        
+        response = 'HTTP/1.1 200 OK\r\n' + content
+    
+    # Any other request_path is deemed invalid
+    else:
+        response = 'HTTP/1.1 404 NOT FOUND\r\nInvalid URL'
+
+    # Pause 3 seconds to simulate page loading
+    # Uncomment following line to test server concurrency
+    # sleep(3)
+
+    return response
+
 
 # Equivalent to INADDR_ANY in C -- use any interface available
 SERVER_HOST = ''
@@ -11,43 +82,6 @@ if len(sys.argv) > 1:
     SERVER_PORT = int(sys.argv[1])
 else:
     SERVER_PORT = 8080
-
-# HTML Content to be served when client is connected
-HTML_CONTENT = '''
-<html>
-<head>
-    <title>EE4210 CA2 TCP Application</title>
-</head>
-<body>
-    <input type="text" id="user-input">
-    <button type="button" onclick="getUserInput();">Submit</button>
-    <p id="output"></p>
-</body>
-<script>
-    function getUserInput() {
-        const input = document.getElementById("user-input").value;
-        document.getElementById("output").innerHTML = "You Typed: " + input;
-    }
-</script>
-</html>
-'''
-
-def handle_request(request):
-    # Process headers
-    headers = request.split('\r\n')
-    request_path = headers[0].split()[1]
-    
-    # If path is root, load HTML_CONTENT
-    if request_path == '/':
-        response = 'HTTP/1.1 200 OK\r\n' + HTML_CONTENT
-    
-    # Any other request_path is deemed invalid
-    else:
-        response = 'HTTP/1.1 404 NOT FOUND\r\nInvalid URL'
-
-    return response
-
-
 
 # Initailize socket using IPv4 address and TCP
 try:
@@ -72,7 +106,7 @@ while True:
         # Detach server socket from child process
         server.detach()
         
-        # Get the client request
+        # Get the client request with 1 MB MTU
         request = client_connection.recv(1024).decode()
         print(request)
 
@@ -83,7 +117,7 @@ while True:
         # Close connection
         client_connection.close()
 
-        # Exit
+        # Exit child process
         os._exit(0)
     
     # Terminate client connection request in parent process

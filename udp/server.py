@@ -1,6 +1,7 @@
 import sys
 import socket
 import os
+from time import sleep
 from datetime import datetime
 
 # Equivalent to INADDR_ANY in C -- use any interface available
@@ -13,14 +14,16 @@ else:
     SERVER_PORT = 8080
 
 # HTML Content to be served when client is connected
-HTML_CONTENT = '''<html>
+HTML_CONTENT = '''
+<html>
 <head>
     <title>EE4210 CA2 UDP Application</title>
 </head>
 <body>
     <p>EE-4210: Continuous Assessment</p>
 </body>
-</html>'''
+</html>
+'''
 
 def handle_request(request):
     # Process headers
@@ -35,8 +38,11 @@ def handle_request(request):
     else:
         response = 'HTTP/1.1 404 NOT FOUND\r\nInvalid URL'
 
-    return response
+    # Pause 3 seconds to simulate page loading
+    # Uncomment following line to test server concurrency
+    # sleep(3)
 
+    return response
 
 
 # Initailize socket using IPv4 address and UDP
@@ -49,7 +55,7 @@ except Exception as e:
     print(f'Unable to start server at port {SERVER_PORT}!\nError: {e}')
 
 while True:
-    # Wait for client connections
+    # Wait for client connections with 1MB MTU
     data, client_address = server.recvfrom(1024)
 
     # fork process only when there is data
@@ -68,7 +74,7 @@ while True:
         response = handle_request(request)
         server.sendto(response.encode(), client_address)
 
-        # Exit
+        # Exit child process
         os._exit(0)
 
 # Close socket
