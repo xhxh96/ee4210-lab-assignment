@@ -5,36 +5,36 @@ from time import sleep
 from datetime import datetime
 from urllib.parse import unquote
 
-# HTML Content to be served when client is connected
+# HTML content to be served when client is connected
 def default_content():
     content = '''
-    <html>
-    <head>
-        <title>EE4210 CA2 TCP Application</title>
-    </head>
-    <body>
-        <form action="/text-response" method="post">
-            <label for="user-input">Enter text here:</label>
-            <input type="text" name="user-input" id="user-input">
-            <input type="submit" value="Submit">
-        </form>
-    </body>
-    </html>
-    '''
+<html>
+<head>
+    <title>EE4210 CA2 TCP Application</title>
+</head>
+<body>
+    <form action="/text-response" method="post">
+        <label for="user-input">Enter text here:</label>
+        <input type="text" name="user-input" id="user-input">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+'''
     return content
 
 # HTML content to display user input
 def response_content(text):
     content = '''
-    <html>
-    <head>
-        <title>EE4210 CA2 TCP Application</title>
-    </head>
-    <body>
-        <p id="output">You typed: {text}</p>
-    </body>
-    </html>
-    '''
+<html>
+<head>
+    <title>EE4210 CA2 TCP Application</title>
+</head>
+<body>
+    <p id="output">You typed: {text}</p>
+</body>
+</html>
+'''
     return content.format(text=text)
 
 # Handle client request

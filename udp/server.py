@@ -4,17 +4,9 @@ import os
 from time import sleep
 from datetime import datetime
 
-# Equivalent to INADDR_ANY in C -- use any interface available
-SERVER_HOST = ''
-
-# Port number is either system argument or default to 8080
-if len(sys.argv) > 1:
-    SERVER_PORT = int(sys.argv[1])
-else:
-    SERVER_PORT = 8080
-
-# HTML Content to be served when client is connected
-HTML_CONTENT = '''
+# HTML content to be served when client is connected
+def default_content():
+    content = '''
 <html>
 <head>
     <title>EE4210 CA2 UDP Application</title>
@@ -25,6 +17,8 @@ HTML_CONTENT = '''
 </html>
 '''
 
+    return content
+
 def handle_request(request):
     # Process headers
     headers = request.split('\r\n')
@@ -32,7 +26,7 @@ def handle_request(request):
     
     # If path is root, load HTML_CONTENT
     if request_path == '/':
-        response = 'HTTP/1.1 200 OK\r\n' + HTML_CONTENT
+        response = 'HTTP/1.1 200 OK\r\n' + default_content()
     
     # Any other request_path is deemed invalid
     else:
@@ -44,6 +38,15 @@ def handle_request(request):
 
     return response
 
+
+# Equivalent to INADDR_ANY in C -- use any interface available
+SERVER_HOST = ''
+
+# Port number is either system argument or default to 8080
+if len(sys.argv) > 1:
+    SERVER_PORT = int(sys.argv[1])
+else:
+    SERVER_PORT = 8080
 
 # Initailize socket using IPv4 address and UDP
 try:
