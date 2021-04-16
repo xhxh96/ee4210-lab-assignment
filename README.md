@@ -3,7 +3,7 @@ Both server files are written in Python 3.8. No extra Python dependencies are re
 
 The TCP server file is `/s1/server.py` while the UDP server file is `/s2/server.py`.
 
-Linux-based operating system is recommended to run both server files. 
+Linux-based operating system is required to run both server files. 
 
 ## TCP HTTP SERVER
 To launch the TCP server:
