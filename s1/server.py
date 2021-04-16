@@ -45,7 +45,7 @@ def handle_request(request):
 
     # If path is root, load HTML_CONTENT
     if request_path == '/':
-        response = 'HTTP/1.1 200 OK\r\n' + default_content()
+        response = 'HTTP/1.1 200 OK\r\n' + 'Content-Type: text/html\r\n' + default_content()
     
     elif request_path == '/text-response':
 
@@ -61,7 +61,7 @@ def handle_request(request):
         # Get HTML content 
         content = response_content(user_input)
         
-        response = 'HTTP/1.1 200 OK\r\n' + content
+        response = 'HTTP/1.1 200 OK\r\n' + 'Content-Type: text/html\r\n' + content
     
     # Any other request_path is deemed invalid
     else:
