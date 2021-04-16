@@ -83,12 +83,12 @@ if len(sys.argv) > 1:
 else:
     SERVER_PORT = 8080
 
-# Initailize socket using IPv4 address and TCP
+# Initailize socket using IPv4 address and TCP with 3 backlog connections
 try:
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((SERVER_HOST, SERVER_PORT))
-    server.listen(5)
+    server.listen(3)
     print(f'Server Started!\nListening to port {SERVER_PORT} ...')
 except Exception as e:
     print(f'Unable to start server at port {SERVER_PORT}!\nError: {e}')
